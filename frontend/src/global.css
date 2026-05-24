@@ -1,0 +1,10 @@
+/* GLOBAL RESET + DARK BACKGROUND */
+html,
+body,
+#root {
+    margin: 0;
+    padding: 0;
+    background: #0d1117;
+    /* DARK THEME */
+    height: 100%;
+}

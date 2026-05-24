@@ -1,0 +1,107 @@
+/* DASHBOARD ROOT ONLY */
+.dashboard-container {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    background: #0d1117;
+    box-sizing: border-box;
+}
+
+/* HEADER */
+.dashboard-header {
+    width: 100%;
+    background: #007bff;
+    color: white;
+    padding: 14px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 18px;
+    box-sizing: border-box;
+}
+
+/* BODY */
+.dashboard-body {
+    display: flex;
+    flex: 1;
+    width: 100%;
+    min-height: 0;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 160px;
+    background: #161b22;
+    padding: 12px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+/* SIDEBAR BUTTONS */
+.sidebar button {
+    width: 100%;
+    padding: 10px;
+    background: #21262d;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.sidebar button:hover {
+    background: #30363d;
+}
+
+/* CONTENT AREA */
+.content-area {
+    flex: 1;
+    width: 100%;
+    min-width: 0;
+    padding: 20px;
+    background: #0d1117;
+    color: white;
+    overflow-y: auto;
+    border-left: 1px solid #30363d;
+}
+
+/* INPUTS */
+.input-box {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 14px;
+    border-radius: 6px;
+    border: 1px solid #30363d;
+    background: #161b22;
+    color: white;
+    font-size: 15px;
+}
+
+/* FORM BUTTONS */
+.login-btn {
+    width: 100%;
+    padding: 12px;
+    background: #007bff;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.logout-btn {
+    background: #0d1117;
+    color: white;
+    border: 1px solid #30363d;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+}

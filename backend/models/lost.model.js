@@ -1,13 +1,13 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
-const LostSchema = new mongoose.Schema({
+const LostItemSchema = new mongoose.Schema({
     name: { type: String, required: true },
     category: { type: String, required: true },
     location: { type: String, required: true },
-    date: { type: String, required: true },
     description: { type: String },
-    status: { type: String, default: "open" },
-    image: { type: String }
-}, { timestamps: true });
+    date: { type: String, required: true },
+    studentId: { type: String, required: true },
+    status: { type: String, default: "pending" }
+});
 
-module.exports = mongoose.model("LostItem", LostSchema);
+export default mongoose.model("LostItem", LostItemSchema);

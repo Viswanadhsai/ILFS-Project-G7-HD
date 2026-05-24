@@ -1,8 +1,9 @@
-class LostItemService {
-    async createLostItem(data) { }
-    async getLostItems() { }
-    async updateLostItem(id, data) { }
-    async deleteLostItem(id) { }
-}
+import LostItem from "../models/lost.model.js";
 
-module.exports = new LostItemService();
+export const createLostItem = (data) => LostItem.create(data);
+
+export const getLostItems = () => LostItem.find();
+
+// ⭐ NEW — update status to "returned"
+export const markLostAsReturned = (id) =>
+    LostItem.findByIdAndUpdate(id, { status: "returned" }, { new: true });

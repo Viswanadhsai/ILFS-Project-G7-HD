@@ -1,38 +1,60 @@
-const LostItem = require("../models/lost.model");
-const FoundItem = require("../models/found.model");
+import { getLostItems } from "../services/lostItem.service.js";
+import { getFoundItems } from "../services/foundItem.service.js";
+import { matchItems } from "../services/matching.service.js";
+import User from "../models/user.model.js";
 
-const matchItems = async (req, res, next) => {
+// GET MATCHES
+export const getMatches = async (req, res) => {
     try {
-        // Fetch all lost + found items
-        const lostItems = await LostItem.find();
-        const foundItems = await FoundItem.find();
+        const lost = await getLostItems();
+        const found = await getFoundItems();
 
-        const matches = [];
+        // IMPORTANT:
+        // matchItems() MUST return studentId inside each match object.
+        // Example match object:
+        // {
+        //   lostId,
+        //   foundId,
+        //   studentId,   <-- REQUIRED
+        //   email,       <-- OPTIONAL
+        //   name,
+        //   category,
+        //   lostLocation,
+        //   foundLocation,
+        //   lostDate,
+        //   foundDate,
+        //   score
+        // }
 
-        // Simple matching logic: name + category
-        lostItems.forEach(lost => {
-            foundItems.forEach(found => {
-                if (
-                    lost.name.toLowerCase() === found.name.toLowerCase() &&
-                    lost.category.toLowerCase() === found.category.toLowerCase()
-                ) {
-                    matches.push({
-                        lostItem: lost,
-                        foundItem: found,
-                        score: 2 // simple scoring system
-                    });
-                }
-            });
-        });
+        const matches = matchItems(lost, found);
 
-        res.json({
-            totalMatches: matches.length,
-            matches
-        });
-
+        res.json(matches);
     } catch (err) {
-        next(err);
+        res.status(500).json({ error: err.message });
     }
 };
 
-module.exports = { matchItems };
+// NOTIFY STUDENT
+export const notifyStudent = async (req, res) => {
+    try {
+        const { studentId, message } = req.body;
+
+        if (!studentId || !message) {
+            return res.status(400).json({ message: "Missing fields" });
+        }
+
+        const user = await User.findOne({ studentId });
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // For now, just log the notification
+        console.log(`NOTIFY → ${user.email}: ${message}`);
+
+        res.json({ message: "Notification sent (console log only)" });
+
+    } catch (err) {
+        console.error("NOTIFY ERROR:", err);
+        res.status(500).json({ message: "Server error" });
+    }
+};

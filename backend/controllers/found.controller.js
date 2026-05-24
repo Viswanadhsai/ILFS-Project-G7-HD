@@ -1,122 +1,44 @@
-const FoundItem = require("../models/found.model");
+import { createFoundItem, getFoundItems, markFoundAsReturned } from "../services/foundItem.service.js";
 
-// GET all found items
-const getFoundItems = async (req, res, next) => {
+export const addFound = async (req, res) => {
     try {
-        const items = await FoundItem.find();
-        res.json(items);
-    } catch (err) {
-        next(err);
-    }
-};
+        console.log("FOUND BODY:", req.body);
 
-// ADD found item
-const addFoundItem = async (req, res, next) => {
-    try {
-        const item = req.body;
+        const { name, category, location, foundBy, date } = req.body;
 
-        if (!item.name || !item.location || !item.category || !item.date) {
+        // VALIDATION
+        if (!name || !category || !location || !foundBy || !date) {
             return res.status(400).json({
-                message: "name, location, category and date required"
+                message: "name, category, location, foundBy and date are required"
             });
         }
 
-        const created = await FoundItem.create(item);
-        res.status(201).json(created);
+        const item = await createFoundItem(req.body);
+        res.json(item);
+
     } catch (err) {
-        next(err);
+        console.error("FOUND ERROR:", err.message);
+        res.status(500).json({ error: err.message });
     }
 };
 
-// UPDATE found item
-const updateFoundItem = async (req, res, next) => {
+export const listFound = async (req, res) => {
     try {
-        const updated = await FoundItem.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            { new: true }
-        );
+        const items = await getFoundItems();
+        res.json(items);
+    } catch (err) {
+        console.error("LIST FOUND ERROR:", err.message);
+        res.status(500).json({ error: err.message });
+    }
+};
 
-        if (!updated) {
-            return res.status(404).json({ message: "Found item not found" });
-        }
-
+// ⭐ NEW — Mark Found Item as Returned
+export const returnFoundItem = async (req, res) => {
+    try {
+        const updated = await markFoundAsReturned(req.params.id);
         res.json(updated);
     } catch (err) {
-        next(err);
+        console.error("RETURN FOUND ERROR:", err.message);
+        res.status(500).json({ error: err.message });
     }
-};
-
-// DELETE found item
-const deleteFoundItem = async (req, res, next) => {
-    try {
-        const deleted = await FoundItem.findByIdAndDelete(req.params.id);
-
-        if (!deleted) {
-            return res.status(404).json({ message: "Found item not found" });
-        }
-
-        res.json({ message: "Found item deleted successfully" });
-    } catch (err) {
-        next(err);
-    }
-};
-
-// GET found item by ID
-const getFoundItemById = async (req, res, next) => {
-    try {
-        const item = await FoundItem.findById(req.params.id);
-
-        if (!item) {
-            return res.status(404).json({ message: "Item not found" });
-        }
-
-        res.json(item);
-    } catch (err) {
-        next(err);
-    }
-};
-
-// GET found items by date
-const getFoundItemsByDate = async (req, res, next) => {
-    try {
-        const items = await FoundItem.find({ date: req.params.date });
-
-        if (items.length === 0) {
-            return res.status(404).json({ message: "No items found for this date" });
-        }
-
-        res.json(items);
-    } catch (err) {
-        next(err);
-    }
-};
-
-// GET found items by name
-const getFoundItemsByName = async (req, res, next) => {
-    try {
-        const name = req.query.name?.toLowerCase();
-
-        const items = await FoundItem.find({
-            name: { $regex: name, $options: "i" }
-        });
-
-        if (items.length === 0) {
-            return res.status(404).json({ message: "No items found with this name" });
-        }
-
-        res.json(items);
-    } catch (err) {
-        next(err);
-    }
-};
-
-module.exports = {
-    getFoundItems,
-    addFoundItem,
-    updateFoundItem,
-    deleteFoundItem,
-    getFoundItemById,
-    getFoundItemsByDate,
-    getFoundItemsByName
 };

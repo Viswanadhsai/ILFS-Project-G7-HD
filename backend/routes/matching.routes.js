@@ -1,8 +1,11 @@
-const express = require("express");
+import express from "express";
+import { getMatches, notifyStudent } from "../controllers/matching.controller.js";
+
 const router = express.Router();
 
-const { matchItems } = require("../controllers/matching.controller");
+router.get("/", getMatches);
 
-router.get("/", matchItems);
+// ⭐ NEW — Notify student about a matched found item
+router.post("/notify/:lostId", notifyStudent);
 
-module.exports = router;
+export default router;

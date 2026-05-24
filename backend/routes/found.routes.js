@@ -1,23 +1,12 @@
-const express = require("express");
+import express from "express";
+import { addFound, listFound, returnFoundItem } from "../controllers/found.controller.js";
+
 const router = express.Router();
 
-const validate = require("../middleware/validation.middleware");
-const { foundItemSchema } = require("../validation/found.validation");
+router.post("/", addFound);
+router.get("/", listFound);
 
-const {
-    getFoundItems,
-    addFoundItem,
-    updateFoundItem,
-    deleteFoundItem,
-    getFoundItemById
-} = require("../controllers/found.controller");
+// ⭐ NEW — Mark Found Item as Returned
+router.patch("/:id/return", returnFoundItem);
 
-router.get("/", getFoundItems);
-router.get("/:id", getFoundItemById);
-
-router.post("/", validate(foundItemSchema), addFoundItem);
-router.put("/:id", validate(foundItemSchema), updateFoundItem);
-
-router.delete("/:id", deleteFoundItem);
-
-module.exports = router;
+export default router;
