@@ -30,13 +30,21 @@ export const notifyStudent = async (req, res) => {
             return res.status(404).json({ message: "Lost item not found" });
         }
 
-        console.log("NOTIFY STUDENT:", {
-            studentId: lostItem.studentId,
+        const notifiedUser = lostItem.studentId && lostItem.studentId !== "UNKNOWN"
+            ? lostItem.studentId
+            : null;
+
+        console.log("NOTIFY USER:", {
+            studentId: lostItem.studentId || "<missing>",
             item: lostItem.name,
             message
         });
 
-        res.json({ message: `Notification queued for student ${lostItem.studentId}` });
+        const responseMessage = notifiedUser
+            ? `Notification queued for user ${notifiedUser}`
+            : "Notification queued for user.";
+
+        res.json({ message: responseMessage });
     } catch (err) {
         console.error("NOTIFY ERROR:", err);
         res.status(500).json({ message: "Server error" });

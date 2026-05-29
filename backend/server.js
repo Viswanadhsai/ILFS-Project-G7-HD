@@ -9,7 +9,7 @@ import studentRoutes from "./routes/student.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import matchingRoutes from "./routes/matching.routes.js";
 
-dotenv.config();
+dotenv.config({ quiet: true });
 
 const requiredEnv = ["MONGO_URI", "JWT_SECRET"];
 const missingEnv = requiredEnv.filter((key) => !process.env[key]);

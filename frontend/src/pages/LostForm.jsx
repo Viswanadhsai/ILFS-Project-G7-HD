@@ -44,10 +44,16 @@ export default function LostForm() {
         e.preventDefault();
         if (!validate()) return;
 
+        const studentId = user?.studentId || user?.id || user?.email;
+        if (!studentId) {
+            setMessage({ type: "error", text: "You must be logged in to report a lost item." });
+            return;
+        }
+
         const payload = {
             ...form,
             date: date.toISOString().split("T")[0],
-            studentId: user?.studentId || user?.id || user?.email || "UNKNOWN",
+            studentId,
         };
 
         try {

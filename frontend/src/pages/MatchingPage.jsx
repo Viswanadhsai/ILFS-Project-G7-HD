@@ -15,7 +15,7 @@ export default function MatchingPage() {
             });
     }, []);
 
-    const notifyStudent = async (match) => {
+    const notifyUser = async (match) => {
         setNotifyingId(match.lostId);
         setMessage(null);
 
@@ -27,7 +27,7 @@ export default function MatchingPage() {
             setMessage({ type: "success", text: res.data.message || "Notification sent successfully." });
         } catch (err) {
             console.error("NOTIFY ERROR:", err);
-            setMessage({ type: "error", text: err.response?.data?.message || "Failed to notify student." });
+            setMessage({ type: "error", text: err.response?.data?.message || "Failed to notify user." });
         } finally {
             setNotifyingId(null);
         }
@@ -71,10 +71,10 @@ export default function MatchingPage() {
 
                             <button
                                 className="primary-btn"
-                                onClick={() => notifyStudent(match)}
+                                onClick={() => notifyUser(match)}
                                 disabled={notifyingId === match.lostId}
                             >
-                                {notifyingId === match.lostId ? "Sending..." : "Notify Student"}
+                                {notifyingId === match.lostId ? "Sending..." : "Notify User"}
                             </button>
                         </div>
                     ))}
