@@ -32,7 +32,6 @@ export const listFound = async (req, res) => {
     }
 };
 
-// ⭐ NEW — Mark Found Item as Returned
 export const returnFoundItem = async (req, res) => {
     try {
         const updated = await markFoundAsReturned(req.params.id);

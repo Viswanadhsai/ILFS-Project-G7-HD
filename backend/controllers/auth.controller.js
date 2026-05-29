@@ -31,7 +31,12 @@ export const register = async (req, res) => {
         res.status(201).json({ message: "User registered successfully" });
 
     } catch (err) {
-        console.error("REGISTER ERROR:", err);
+        console.error("REGISTER ERROR:", {
+            message: err.message,
+            code: err.code,
+            name: err.name,
+            stack: err.stack
+        });
         res.status(500).json({ message: "Server error" });
     }
 };
@@ -68,7 +73,12 @@ export const login = async (req, res) => {
         });
 
     } catch (err) {
-        console.error("LOGIN ERROR:", err);
+        console.error("LOGIN ERROR:", {
+            message: err.message,
+            code: err.code,
+            name: err.name,
+            stack: err.stack
+        });
         res.status(500).json({ message: "Server error" });
     }
 };

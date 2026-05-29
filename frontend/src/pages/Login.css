@@ -1,57 +1,81 @@
-/* ROOT LOGIN PAGE */
 .login-page {
     min-height: 100vh;
     width: 100%;
-    background: #0d1117;
+    background:
+        linear-gradient(135deg, rgba(9, 32, 38, 0.92), rgba(5, 12, 18, 0.96)),
+        radial-gradient(circle at 30% 20%, rgba(68, 211, 177, 0.22), transparent 32%),
+        radial-gradient(circle at 70% 15%, rgba(120, 161, 255, 0.18), transparent 26%);
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 0;
+    padding: 28px;
     margin: 0;
-    box-sizing: border-box;
 }
 
-/* LOGIN BOX */
-.login-box {
-    width: 360px;
-    /* PERFECT SIZE */
-    background: #161b22;
-    padding: 35px;
-    border-radius: 10px;
-    border: 1px solid #30363d;
-    box-sizing: border-box;
-}
-
-/* TITLE */
-.login-box h2 {
-    color: white;
+.welcome-text {
     text-align: center;
-    margin-bottom: 25px;
+    font-size: clamp(26px, 4vw, 42px);
+    font-weight: 800;
+    color: #f8fffd;
+    margin-bottom: 28px;
+    letter-spacing: 0;
+}
+
+.login-box {
+    width: min(420px, 100%);
+    background: rgba(13, 27, 34, 0.84);
+    padding: 34px;
+    border-radius: 8px;
+    border: 1px solid rgba(145, 181, 177, 0.22);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
+    backdrop-filter: blur(18px);
+}
+
+.login-box h2 {
+    color: #f8fffd;
+    text-align: center;
+    margin: 0 0 25px;
     font-size: 24px;
 }
 
-/* INPUTS */
 .input-box {
     width: 100%;
     padding: 14px;
     margin-bottom: 18px;
-    border-radius: 6px;
-    border: 1px solid #30363d;
-    background: #0d1117;
-    color: white;
+    border-radius: 8px;
+    border: 1px solid rgba(145, 181, 177, 0.24);
+    background: rgba(5, 15, 20, 0.86);
+    color: #f8fffd;
     font-size: 16px;
-    box-sizing: border-box;
+    outline: none;
 }
 
-/* BUTTONS */
+.input-box:focus {
+    border-color: #55d6be;
+    box-shadow: 0 0 0 3px rgba(85, 214, 190, 0.14);
+}
+
 .login-btn {
     width: 100%;
     padding: 14px;
-    background: #007bff;
+    background: linear-gradient(135deg, #55d6be, #6ca8ff);
     border: none;
-    border-radius: 6px;
-    color: white;
+    border-radius: 8px;
+    color: #031115;
     font-size: 16px;
+    font-weight: 800;
     cursor: pointer;
     margin-top: 10px;
+    box-shadow: 0 12px 28px rgba(85, 214, 190, 0.2);
+}
+
+.login-btn:hover {
+    filter: brightness(1.06);
+}
+
+@media (max-width: 520px) {
+    .login-box {
+        padding: 24px;
+    }
 }

@@ -32,7 +32,6 @@ export const listLost = async (req, res) => {
     }
 };
 
-// ⭐ NEW — Mark Lost Item as Returned
 export const returnLostItem = async (req, res) => {
     try {
         const updated = await markLostAsReturned(req.params.id);

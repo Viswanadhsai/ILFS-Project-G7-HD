@@ -2,26 +2,27 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
 
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
 export default function RegisterPage() {
     const navigate = useNavigate();
 
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [message, setMessage] = useState(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // 🔥 DEBUG LOG ADDED HERE
-        console.log("STATE:", name, email, password);
-
         if (!name || !email || !password) {
-            alert("All fields are required");
+            setMessage({ type: "error", text: "All fields are required." });
             return;
         }
 
         try {
-            const res = await fetch("http://localhost:5000/auth/register", {
+            setMessage(null);
+            const res = await fetch(`${API_URL}/auth/register`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -29,18 +30,18 @@ export default function RegisterPage() {
                 body: JSON.stringify({ name, email, password }),
             });
 
-            const data = await res.json();
+            const data = await res.json().catch(() => ({}));
 
             if (!res.ok) {
-                alert(data.message || "Registration failed");
+                setMessage({ type: "error", text: data.message || "Registration failed." });
                 return;
             }
 
-            alert("Registration successful! Please log in.");
-            navigate("/");
+            setMessage({ type: "success", text: "Registration successful. Please log in." });
+            setTimeout(() => navigate("/"), 900);
         } catch (err) {
-            console.error(err);
-            alert("Something went wrong");
+            console.error("Registration request failed:", err);
+            setMessage({ type: "error", text: `Could not reach the backend at ${API_URL}. Please check the backend is running.` });
         }
     };
 
@@ -48,6 +49,7 @@ export default function RegisterPage() {
         <div className="login-page">
             <form className="login-box" onSubmit={handleSubmit}>
                 <h2>Register</h2>
+                {message && <div className={`app-message ${message.type}`}>{message.text}</div>}
 
                 <input
                     type="text"

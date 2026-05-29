@@ -2,22 +2,26 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
 
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
 export default function LoginPage() {
     const navigate = useNavigate();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [message, setMessage] = useState(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (!email || !password) {
-            alert("Enter email and password");
+            setMessage({ type: "error", text: "Enter email and password." });
             return;
         }
 
         try {
-            const res = await fetch("http://localhost:5000/auth/login", {
+            setMessage(null);
+            const res = await fetch(`${API_URL}/auth/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -25,31 +29,34 @@ export default function LoginPage() {
                 body: JSON.stringify({ email, password }),
             });
 
-            const data = await res.json();
+            const data = await res.json().catch(() => ({}));
 
             if (!res.ok) {
-                alert(data.message || "Login failed");
+                setMessage({ type: "error", text: data.message || "Login failed." });
                 return;
             }
 
-            // ⭐ Save JWT token
             localStorage.setItem("token", data.token);
-
-            // ⭐ Save logged-in user (IMPORTANT)
             localStorage.setItem("user", JSON.stringify(data.user));
 
-            navigate("/lost-form");
+            navigate("/home");
 
         } catch (err) {
             console.error("Login Error:", err);
-            alert("Server error");
+            setMessage({ type: "error", text: `Could not reach the backend at ${API_URL}. Please check the backend is running.` });
         }
     };
 
     return (
         <div className="login-page">
+
+            <div className="welcome-text">
+                Welcome to Intelligent Lost & Found System
+            </div>
+
             <form className="login-box" onSubmit={handleSubmit}>
                 <h2>Login</h2>
+                {message && <div className={`app-message ${message.type}`}>{message.text}</div>}
 
                 <input
                     type="email"

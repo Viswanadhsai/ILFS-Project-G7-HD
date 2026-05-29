@@ -6,7 +6,6 @@ const router = express.Router();
 router.post("/", addLost);
 router.get("/", listLost);
 
-// ⭐ NEW — Mark Lost Item as Returned
 router.patch("/:id/return", returnLostItem);
 
 export default router;

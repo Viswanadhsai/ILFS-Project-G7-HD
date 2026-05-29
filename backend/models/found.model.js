@@ -6,8 +6,8 @@ const FoundItemSchema = new mongoose.Schema({
     location: { type: String, required: true },
     description: { type: String },
     date: { type: String, required: true },
-    foundBy: { type: String, required: true },   // ⭐ who reported the item
-    status: { type: String, default: "pending" } // ⭐ correct status flow
+    foundBy: { type: String, required: true },
+    status: { type: String, default: "pending" }
 });
 
 export default mongoose.model("FoundItem", FoundItemSchema);

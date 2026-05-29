@@ -1,9 +1,8 @@
 export const matchItems = (lostItems, foundItems) => {
     const matches = [];
 
-    lostItems.forEach(lost => {
-        foundItems.forEach(found => {
-
+    lostItems.forEach((lost) => {
+        foundItems.forEach((found) => {
             if (lost.category !== found.category) return;
 
             const lostName = lost.name.toLowerCase();
@@ -16,7 +15,7 @@ export const matchItems = (lostItems, foundItems) => {
                 nameScore = 40;
             } else {
                 const lostWords = lostName.split(" ").filter(Boolean);
-                const overlap = lostWords.filter(w => foundName.includes(w)).length;
+                const overlap = lostWords.filter((word) => foundName.includes(word)).length;
                 if (overlap > 0) nameScore = 20 + overlap * 5;
             }
             if (nameScore === 0) return;
@@ -31,7 +30,7 @@ export const matchItems = (lostItems, foundItems) => {
                 locationScore = 20;
             } else {
                 const locWords = lostLoc.split(" ").filter(Boolean);
-                const overlap = locWords.filter(w => foundLoc.includes(w)).length;
+                const overlap = locWords.filter((word) => foundLoc.includes(word)).length;
                 if (overlap > 0) locationScore = 10 + overlap * 5;
             }
             if (locationScore === 0) return;
@@ -48,12 +47,10 @@ export const matchItems = (lostItems, foundItems) => {
 
             const totalScore = nameScore + locationScore + dateScore;
 
-            // ⭐ FIX: Add studentId + email so notify works
             matches.push({
                 lostId: lost._id,
                 foundId: found._id,
-                studentId: lost.studentId,   // <-- REQUIRED
-                email: lost.email,           // <-- OPTIONAL but useful
+                studentId: lost.studentId,
                 name: lost.name,
                 category: lost.category,
                 lostLocation: lost.location,

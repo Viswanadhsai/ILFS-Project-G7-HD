@@ -4,6 +4,5 @@ export const createLostItem = (data) => LostItem.create(data);
 
 export const getLostItems = () => LostItem.find();
 
-// ⭐ NEW — update status to "returned"
 export const markLostAsReturned = (id) =>
     LostItem.findByIdAndUpdate(id, { status: "returned" }, { new: true });

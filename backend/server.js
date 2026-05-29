@@ -10,12 +10,25 @@ import authRoutes from "./routes/auth.routes.js";
 import matchingRoutes from "./routes/matching.routes.js";
 
 dotenv.config();
-connectDB();
+
+const requiredEnv = ["MONGO_URI", "JWT_SECRET"];
+const missingEnv = requiredEnv.filter((key) => !process.env[key]);
+if (missingEnv.length > 0) {
+    console.error(`Missing required environment variable(s): ${missingEnv.join(", ")}`);
+    process.exit(1);
+}
+
+await connectDB();
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+app.use((req, res, next) => {
+    console.log(`${req.method} ${req.originalUrl}`);
+    next();
+});
 
 app.use("/lost", lostRoutes);
 app.use("/found", foundRoutes);
@@ -28,8 +41,13 @@ app.get("/", (req, res) => {
 });
 
 app.use((err, req, res, next) => {
-    console.error("Backend Error:", err.message);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error("Unhandled backend error:", {
+        method: req.method,
+        url: req.originalUrl,
+        message: err.message,
+        stack: err.stack
+    });
+    res.status(500).json({ message: "Internal Server Error" });
 });
 
 const PORT = process.env.PORT || 5000;

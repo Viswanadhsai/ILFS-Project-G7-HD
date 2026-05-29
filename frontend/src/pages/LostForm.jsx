@@ -13,8 +13,9 @@ export default function LostForm() {
 
     const [date, setDate] = useState(null);
     const [errors, setErrors] = useState({});
+    const [message, setMessage] = useState(null);
 
-    const user = JSON.parse(localStorage.getItem("user")); // ⭐ get logged-in user
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
 
     const categories = [
         "Electronics",
@@ -46,33 +47,41 @@ export default function LostForm() {
         const payload = {
             ...form,
             date: date.toISOString().split("T")[0],
-            studentId: user?.studentId || "UNKNOWN", // ⭐ REQUIRED FIELD
+            studentId: user?.studentId || user?.id || user?.email || "UNKNOWN",
         };
 
         try {
             await api.post("/lost", payload);
-            alert("Lost item reported successfully");
+            setMessage({ type: "success", text: "Lost item reported successfully." });
 
             setForm({ name: "", category: "", location: "", description: "" });
             setDate(null);
+            setErrors({});
         } catch (err) {
             console.error(err);
-            alert("Failed to submit");
+            setMessage({ type: "error", text: err.response?.data?.message || "Failed to submit lost item." });
         }
     };
 
     return (
-        <div style={{ color: "white" }}>
-            <h1>Report Lost Item</h1>
+        <div className="page-shell">
+            <div className="page-header">
+                <div>
+                    <p className="eyebrow">Create report</p>
+                    <h1>Report Lost Item</h1>
+                </div>
+            </div>
 
-            <form onSubmit={handleSubmit} style={{ maxWidth: "500px" }}>
+            {message && <div className={`app-message ${message.type}`}>{message.text}</div>}
+
+            <form className="form-card" onSubmit={handleSubmit}>
                 <label>Name</label>
                 <input
                     className="input-box"
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
                 />
-                {errors.name && <p style={{ color: "red" }}>{errors.name}</p>}
+                {errors.name && <p className="field-error">{errors.name}</p>}
 
                 <label>Category</label>
                 <select
@@ -85,7 +94,7 @@ export default function LostForm() {
                         <option key={c} value={c}>{c}</option>
                     ))}
                 </select>
-                {errors.category && <p style={{ color: "red" }}>{errors.category}</p>}
+                {errors.category && <p className="field-error">{errors.category}</p>}
 
                 <label>Location</label>
                 <input
@@ -93,7 +102,7 @@ export default function LostForm() {
                     value={form.location}
                     onChange={(e) => setForm({ ...form, location: e.target.value })}
                 />
-                {errors.location && <p style={{ color: "red" }}>{errors.location}</p>}
+                {errors.location && <p className="field-error">{errors.location}</p>}
 
                 <label>Date</label>
                 <DatePicker
@@ -102,7 +111,7 @@ export default function LostForm() {
                     className="input-box"
                     dateFormat="yyyy-MM-dd"
                 />
-                {errors.date && <p style={{ color: "red" }}>{errors.date}</p>}
+                {errors.date && <p className="field-error">{errors.date}</p>}
 
                 <label>Description (optional)</label>
                 <textarea
@@ -111,7 +120,7 @@ export default function LostForm() {
                     onChange={(e) => setForm({ ...form, description: e.target.value })}
                 />
 
-                <button className="login-btn" type="submit">
+                <button className="primary-btn" type="submit">
                     Submit Lost Item
                 </button>
             </form>

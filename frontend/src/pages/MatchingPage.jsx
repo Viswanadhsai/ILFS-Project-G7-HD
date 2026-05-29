@@ -1,96 +1,85 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api/client";
 
 export default function MatchingPage() {
     const [matches, setMatches] = useState([]);
-    const [message, setMessage] = useState("");
+    const [message, setMessage] = useState(null);
+    const [notifyingId, setNotifyingId] = useState(null);
 
     useEffect(() => {
-        axios.get("http://localhost:5000/matching")
-            .then(res => setMatches(res.data))
-            .catch(err => console.error("MATCHING ERROR:", err));
+        api.get("/matching")
+            .then((res) => setMatches(res.data))
+            .catch((err) => {
+                console.error("MATCHING ERROR:", err);
+                setMessage({ type: "error", text: "Unable to load potential matches." });
+            });
     }, []);
 
     const notifyStudent = async (match) => {
+        setNotifyingId(match.lostId);
+        setMessage(null);
+
         try {
-            await axios.post("http://localhost:5000/matching/notify", {
-                studentId: match.studentId,   // <-- This will be fixed AFTER we see match object
-                message: "Your lost item has been matched with a found item."
+            const res = await api.post(`/matching/notify/${match.lostId}`, {
+                message: `Your lost item "${match.name}" may match a found item.`
             });
 
-            setMessage("Notification sent successfully!");
+            setMessage({ type: "success", text: res.data.message || "Notification sent successfully." });
         } catch (err) {
             console.error("NOTIFY ERROR:", err);
-            setMessage("Failed to notify student");
+            setMessage({ type: "error", text: err.response?.data?.message || "Failed to notify student." });
+        } finally {
+            setNotifyingId(null);
         }
     };
 
     return (
-        <div style={{ padding: "20px" }}>
-            <h2>Matching Items</h2>
+        <div className="page-shell">
+            <div className="page-header">
+                <div>
+                    <p className="eyebrow">Matching engine</p>
+                    <h1>Potential Matches</h1>
+                </div>
+                <span className="count-pill">{matches.length} matches</span>
+            </div>
 
-            {message && (
-                <div style={{ background: "#d4edda", padding: "10px", marginBottom: "15px" }}>
-                    {message}
+            {message && <div className={`app-message ${message.type}`}>{message.text}</div>}
+
+            {matches.length === 0 ? (
+                <div className="empty-panel">No matches found yet.</div>
+            ) : (
+                <div className="match-grid">
+                    {matches.map((match) => (
+                        <div key={`${match.lostId}-${match.foundId}`} className="match-card">
+                            <div className="match-card-header">
+                                <div>
+                                    <p className="eyebrow">Matched item</p>
+                                    <h2>{match.name}</h2>
+                                </div>
+                                {typeof match.score === "number" && (
+                                    <span className="score-pill">{match.score}%</span>
+                                )}
+                            </div>
+
+                            <div className="match-details">
+                                <div><span>Category</span>{match.category}</div>
+                                <div><span>Lost location</span>{match.lostLocation}</div>
+                                <div><span>Found location</span>{match.foundLocation}</div>
+                                <div><span>Lost date</span>{match.lostDate}</div>
+                                <div><span>Found date</span>{match.foundDate}</div>
+                            </div>
+
+                            <button
+                                className="primary-btn"
+                                onClick={() => notifyStudent(match)}
+                                disabled={notifyingId === match.lostId}
+                            >
+                                {notifyingId === match.lostId ? "Sending..." : "Notify Student"}
+                            </button>
+                        </div>
+                    ))}
                 </div>
             )}
-
-            {matches.length === 0 && <p>No matches found.</p>}
-
-            {matches.map((m, index) => {
-                console.log("MATCH OBJECT:", m);   // <-- REQUIRED FOR FIXING NOTIFY
-
-                return (
-                    <div
-                        key={index}
-                        style={{
-                            border: "1px solid #ccc",
-                            padding: "15px",
-                            marginBottom: "10px",
-                            borderRadius: "8px"
-                        }}
-                    >
-                        <h3>
-                            {m.name}
-                            {typeof m.score === "number" && (
-                                <span
-                                    style={{
-                                        background: "#4caf50",
-                                        color: "white",
-                                        padding: "4px 8px",
-                                        borderRadius: "6px",
-                                        marginLeft: "10px",
-                                        fontSize: "14px"
-                                    }}
-                                >
-                                    Score: {m.score}%
-                                </span>
-                            )}
-                        </h3>
-
-                        <p><strong>Category:</strong> {m.category}</p>
-                        <p><strong>Lost Location:</strong> {m.lostLocation}</p>
-                        <p><strong>Found Location:</strong> {m.foundLocation}</p>
-                        <p><strong>Lost Date:</strong> {m.lostDate}</p>
-                        <p><strong>Found Date:</strong> {m.foundDate}</p>
-
-                        <button
-                            onClick={() => notifyStudent(m)}
-                            style={{
-                                marginTop: "10px",
-                                padding: "8px 12px",
-                                background: "#2196f3",
-                                color: "white",
-                                border: "none",
-                                borderRadius: "5px",
-                                cursor: "pointer"
-                            }}
-                        >
-                            Notify Student
-                        </button>
-                    </div>
-                );
-            })}
         </div>
     );
 }

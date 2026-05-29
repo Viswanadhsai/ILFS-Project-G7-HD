@@ -6,6 +6,7 @@ import RegisterPage from "./pages/RegisterPage";
 
 import DashboardLayout from "./layout/DashboardLayout";
 
+import HomePage from "./pages/HomePage";
 import LostForm from "./pages/LostForm";
 import FoundForm from "./pages/FoundForm";
 import LostItemsPage from "./pages/LostItemsPage";
@@ -22,6 +23,7 @@ function App() {
                 <Route path="/register" element={<RegisterPage />} />
 
                 {/* PROTECTED ROUTES */}
+                <Route path="/home" element={<DashboardLayout><HomePage /></DashboardLayout>} />
                 <Route path="/lost-form" element={<DashboardLayout><LostForm /></DashboardLayout>} />
                 <Route path="/found-form" element={<DashboardLayout><FoundForm /></DashboardLayout>} />
                 <Route path="/lost-items" element={<DashboardLayout><LostItemsPage /></DashboardLayout>} />

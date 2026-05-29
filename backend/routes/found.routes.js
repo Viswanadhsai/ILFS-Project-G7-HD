@@ -6,7 +6,6 @@ const router = express.Router();
 router.post("/", addFound);
 router.get("/", listFound);
 
-// ⭐ NEW — Mark Found Item as Returned
 router.patch("/:id/return", returnFoundItem);
 
 export default router;
